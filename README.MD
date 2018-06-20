@@ -6,7 +6,7 @@ selected. Because this project is relatively new only a few languages
 and ORMs are supported.
 
 ## Currently supported languages
-* Python
+* Python, 3.6.5
 
 ## Currently supported ORM
-* SQLAlchemy
+* SQLAlchemy, 1.2.8
