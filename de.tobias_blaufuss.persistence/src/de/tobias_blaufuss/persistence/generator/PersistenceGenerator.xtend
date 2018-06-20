@@ -3,23 +3,20 @@
  */
 package de.tobias_blaufuss.persistence.generator
 
+import com.google.inject.Inject
+import de.tobias_blaufuss.persistence.generator.erm.metamodel.Column
+import de.tobias_blaufuss.persistence.generator.erm.metamodel.ForeignKey
+import de.tobias_blaufuss.persistence.persistence.BackrefField
+import de.tobias_blaufuss.persistence.persistence.Cardinality
+import de.tobias_blaufuss.persistence.persistence.Entity
+import de.tobias_blaufuss.persistence.persistence.EntityField
+import de.tobias_blaufuss.persistence.persistence.PersistenceModel
+import de.tobias_blaufuss.persistence.persistence.PropertyField
+import java.util.LinkedList
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.tobias_blaufuss.persistence.persistence.PersistenceModel
-import de.tobias_blaufuss.persistence.persistence.PropertyField
-import de.tobias_blaufuss.persistence.persistence.Type
-import de.tobias_blaufuss.persistence.persistence.Cardinality
-import de.tobias_blaufuss.persistence.persistence.EntityField
-import de.tobias_blaufuss.persistence.persistence.Entity
-import java.util.LinkedList
-import de.tobias_blaufuss.persistence.persistence.StringType
-import de.tobias_blaufuss.persistence.persistence.IntegerType
-import de.tobias_blaufuss.persistence.persistence.TypeOption
-import java.util.List
-import de.tobias_blaufuss.persistence.persistence.UniqueOption
-import de.tobias_blaufuss.persistence.persistence.NotNullOption
 
 /**
  * Generates code from your model files on save.
@@ -27,13 +24,11 @@ import de.tobias_blaufuss.persistence.persistence.NotNullOption
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
 class PersistenceGenerator extends AbstractGenerator {
-
+	@Inject extension EntityFieldUtils
+	@Inject extension PersistenceModelUtils
+	@Inject extension EntityUtils
+	
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-//			resource.allContents
-//				.filter(Greeting)
-//				.map[name]
-//				.join(', '))
 		for (e : resource.allContents.toIterable.filter(PersistenceModel)) {
 			fsa.generateFile('model.py', e.compileModel)
 		}
@@ -50,50 +45,88 @@ class PersistenceGenerator extends AbstractGenerator {
 				__tablename__ = '«entity.name.toLowerCase»'
 				id = DB.Column(DB.Integer, primary_key=True)
 				
-				// Attributes
+				«IF !entity.fields.filter(PropertyField).empty»«PythonConstants.COMMENT» Attributes
 				«FOR property: entity.fields.filter(PropertyField)»
 					«property.compilePropertyField»
 				«ENDFOR»
+				«ENDIF»
+				«IF entity.hasEntityFieldsOfCardinality(Cardinality.ONE_TO_MANY)»
 				
+				«PythonConstants.COMMENT» Relationships: 1..n
+				«FOR property: entity.getEntityFieldsWithCardinality(Cardinality.ONE_TO_MANY)»
+					«property.compileEntityField»
+				«ENDFOR»
+				«ENDIF»
+				«IF entity.hasEntityFieldsOfCardinality(Cardinality.MANY_TO_ONE)»
 				
+				«PythonConstants.COMMENT» Relationships: n..1
+				«FOR property: entity.getEntityFieldsWithCardinality(Cardinality.MANY_TO_ONE)»
+					«property.compileEntityField»
+				«ENDFOR»
+				«ENDIF»
+				«IF entity.hasEntityFieldsOfCardinality(Cardinality.MANY_TO_MANY)»
+				
+				«PythonConstants.COMMENT» Relationships: n..m
+				«FOR property: entity.getEntityFieldsWithCardinality(Cardinality.MANY_TO_MANY)»
+				«property.compileEntityField»
+				«ENDFOR»
+				«ENDIF»
+				«IF entity.hasBackrefFields»
+				
+				«PythonConstants.COMMENT» Backref
+				«FOR backrefField: entity.backrefFields»
+				«backrefField.compileBackrefField»
+				«ENDFOR»
+				«ENDIF»
+				
+				def get_id(self):
+					return self.id
+					
+					
 		«ENDFOR»
 	'''
-
+	
 	def compilePropertyField(PropertyField property) '''
-		«property.name» = DB.Column(DB.«property.type.compilePropertyType»«property.options.compileFieldOptions»)
+		«new Column(property).SQLAlchemyText»
 	'''
-
-	def compileFieldOptions(List<TypeOption> options) {
-		if(options.empty) return ''
-		return '''«FOR option : options», «option.compileTypeOption»«ENDFOR»'''
+	
+	def compileBackrefField(BackrefField field)'''
+		«new Column(field).SQLAlchemyText»
+	'''
+	
+	def compileEntityField(EntityField field){
+		return '''
+		«IF field.cardinality == Cardinality.MANY_TO_ONE»
+		«new Column(field).SQLAlchemyText»
+		«ENDIF»
+		«field.name» = DB.relationship('«field.entityName»'«field.compileEntityFieldOptions»)
+		'''
 	}
-
-	def compileTypeOption(TypeOption option) {
-
-		switch option {
-			UniqueOption: return '''unique=«(if(option.unique) PythonConstants.TRUE else PythonConstants.FALSE)»'''
-			NotNullOption: return '''nullable=«(if(option.notNull) PythonConstants.FALSE else PythonConstants.TRUE)»'''
+	
+	def compileEntityFieldOptions(EntityField field){
+		val result = new LinkedList
+		if(field.hasBackrefField) result.add(''', backref='«field.backrefField.name»' ''')
+		
+		switch field.cardinality {
+			case MANY_TO_ONE: result.add(''', foreign_keys=[«new ForeignKey(field).sourceFkColumn»]''')
+			case MANY_TO_MANY: result.add(''', secondary=«new ManyToManyMetadata(field).tableName»''')
+			default: {
+			}
 		}
+		result.reduce[p1, p2| p1.concat(p2)]
 	}
 
-	def compilePropertyType(Type type) {
-		switch type {
-			StringType: return '''String(«resolveStringTypeCount(type)»)'''
-			IntegerType: return "Integer"
-		}
-	}
+
 
 	def compileManyToManySecondaryTables(PersistenceModel model) {
 		val manyToManyRelations = gatherFieldsWithCardinality(model, Cardinality.MANY_TO_MANY)
 		val result = new LinkedList
 		for (relation : manyToManyRelations) {
-			val source = relation.eContainer as Entity
-			val destination = relation.entityReference
-			val srcDestStr = '''«source.name»_«destination.name»'''
+			val details = new ManyToManyMetadata(relation)
 			result.add('''
-				«srcDestStr.toUpperCase»_TABLE = DB.Table('«srcDestStr.toLowerCase»', DB.Model.metadata,
-														  «source.compileMergeTableRelationship»,
-														  «destination.compileMergeTableRelationship»)
+				«details.tableName» = DB.Table('«details.relationName»', DB.Model.metadata,
+														  «details.source.compileMergeTableRelationship»,
+														  «details.destination.compileMergeTableRelationship»)
 			''')
 		}
 
@@ -111,19 +144,4 @@ class PersistenceGenerator extends AbstractGenerator {
 				  DB.ForeignKey('«entity.name.toLowerCase».id'),
 				  nullable=False)
 	'''
-
-	def resolveStringTypeCount(StringType stringType) {
-		if (stringType.count <= 0) {
-			return 50
-		} else {
-			return stringType.count
-		}
-	}
-
-	def gatherFieldsWithCardinality(PersistenceModel model, Cardinality cardinality) {
-		val allFieldsWithCardinality = model.entities.map[e|e.fields].flatten.filter(EntityField).filter [f |
-			f.cardinality == cardinality
-		]
-		return allFieldsWithCardinality
-	}
 }

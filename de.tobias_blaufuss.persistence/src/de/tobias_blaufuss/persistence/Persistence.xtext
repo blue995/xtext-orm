@@ -24,11 +24,11 @@ PropertyField:
 ;
 
 EntityField:
-	'object' '[' cardinality=Cardinality ']' name=ID ':' entityReference=[Entity]
+	'object' '[' cardinality=Cardinality ']' name=ID ':' entityReference=[Entity] ('[' options+=TypeOption (',' options+=TypeOption)? ']')?
 ;
 
 BackrefField:
-	'backref' '[' backref=[EntityField|FQN] ']' name=ID
+	'backref' '[' backref=[EntityField|FQN] ']' name=ID ('[' options+=TypeOption (',' options+=TypeOption)? ']')?
 ;
 
 FQN:
