@@ -1,0 +1,66 @@
+grammar de.tobias_blaufuss.persistence.Persistence with org.eclipse.xtext.common.Terminals
+
+generate persistence "http://www.tobias_blaufuss.de/persistence/Persistence"
+
+Model:
+	PersistenceModel
+;
+
+PersistenceModel:
+	(entities+=Entity)+
+;
+Entity:
+	'entity' name=ID '{'
+		fields+=Field+
+	'}'
+;
+
+Field:
+	PropertyField | EntityField | BackrefField
+;
+
+PropertyField:
+	'property' name=ID ':' type=Type ('[' options+=TypeOption (',' options+=TypeOption)? ']')?
+;
+
+EntityField:
+	'object' '[' cardinality=Cardinality ']' name=ID ':' entityReference=[Entity]
+;
+
+BackrefField:
+	'backref' '[' backref=[EntityField|FQN] ']' name=ID
+;
+
+FQN:
+	ID ('.' ID)*
+;
+
+Type:
+	StringType | IntegerType
+;
+
+StringType:
+	{StringType}
+	'String' ('(' count=INT ')')?
+;
+
+IntegerType:
+	{IntegerType} 
+	'Integer'
+;
+
+TypeOption:
+	UniqueOption | NotNullOption
+;
+
+UniqueOption:
+	unique ?= 'unique'
+;
+
+NotNullOption:
+	notNull ?= 'not_null'
+;
+
+enum Cardinality:
+	ONE_TO_MANY="1..n" | MANY_TO_MANY="n..m" | MANY_TO_ONE="n..1" | ONE_TO_ONE="1..1"
+;
