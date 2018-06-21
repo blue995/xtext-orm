@@ -3,12 +3,11 @@
  */
 package de.tobias_blaufuss.persistence.validation
 
-import de.tobias_blaufuss.persistence.persistence.BackrefField
-import org.eclipse.xtext.validation.Check
-import de.tobias_blaufuss.persistence.persistence.Entity
-import de.tobias_blaufuss.persistence.persistence.PersistencePackage
 import com.google.inject.Inject
 import de.tobias_blaufuss.persistence.generator.FieldUtils
+import de.tobias_blaufuss.persistence.persistence.BackrefField
+import de.tobias_blaufuss.persistence.persistence.PersistencePackage
+import org.eclipse.xtext.validation.Check
 
 /**
  * This class contains custom validation rules. 
