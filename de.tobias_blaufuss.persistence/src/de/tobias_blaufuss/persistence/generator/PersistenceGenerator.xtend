@@ -45,8 +45,8 @@ class PersistenceGenerator extends AbstractGenerator {
 				__tablename__ = '«entity.name.toLowerCase»'
 				id = DB.Column(DB.Integer, primary_key=True)
 				
-				«IF !entity.fields.filter(PropertyField).empty»«PythonConstants.COMMENT» Attributes
-				«FOR property: entity.fields.filter(PropertyField)»
+				«IF entity.hasPropertyFields»«PythonConstants.COMMENT» Attributes
+				«FOR property: entity.propertyFields»
 					«property.compilePropertyField»
 				«ENDFOR»
 				«ENDIF»

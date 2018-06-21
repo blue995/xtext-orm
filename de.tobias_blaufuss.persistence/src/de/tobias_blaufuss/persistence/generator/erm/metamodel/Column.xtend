@@ -12,6 +12,8 @@ import de.tobias_blaufuss.persistence.generator.PythonConstants
 import de.tobias_blaufuss.persistence.generator.erm.ISQLAlchemyGenerator
 import de.tobias_blaufuss.persistence.persistence.BackrefField
 import de.tobias_blaufuss.persistence.persistence.EntityField
+import de.tobias_blaufuss.persistence.persistence.Field
+import de.tobias_blaufuss.persistence.persistence.FieldDeclaration
 
 class Column implements ISQLAlchemyGenerator{
 	String columnName
@@ -19,23 +21,23 @@ class Column implements ISQLAlchemyGenerator{
 	String typeText
 	List<TypeOption> options
 	
-	new(String columnName, ForeignKey fk, String typeText, List<TypeOption> options){
+	new(String columnName, ForeignKey fk, String typeText, Field field){
 		this.columnName = columnName
 		this.fk = fk
 		this.typeText = typeText
-		this.options = options
+		this.options = (field.eContainer as FieldDeclaration).options
 	}
 	
 	new(PropertyField field){
-		this(field.name, null, field.type.compilePropertyType, field.options)
+		this(field.name, null, field.type.compilePropertyType, field)
 	}
 	
 	new(BackrefField field){
-		this(new ForeignKey(field).sourceFkColumn, new ForeignKey(field), 'Integer', field.options)
+		this(new ForeignKey(field).sourceFkColumn, new ForeignKey(field), 'Integer', field)
 	}
 	
 	new(EntityField field){
-		this(new ForeignKey(field).sourceFkColumn, new ForeignKey(field), 'Integer', field.options)
+		this(new ForeignKey(field).sourceFkColumn, new ForeignKey(field), 'Integer', field)
 	}
 	
 	private static def compilePropertyType(Type type) {

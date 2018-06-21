@@ -7,6 +7,8 @@ import de.tobias_blaufuss.persistence.persistence.BackrefField
 import org.eclipse.xtext.validation.Check
 import de.tobias_blaufuss.persistence.persistence.Entity
 import de.tobias_blaufuss.persistence.persistence.PersistencePackage
+import com.google.inject.Inject
+import de.tobias_blaufuss.persistence.generator.FieldUtils
 
 /**
  * This class contains custom validation rules. 
@@ -25,13 +27,14 @@ class PersistenceValidator extends AbstractPersistenceValidator {
 //					INVALID_NAME)
 //		}
 //	}
+	@Inject extension FieldUtils
 	
 	@Check(FAST)
 	def checkValidBackrefFieldType(BackrefField field){
-		val entityOfField = field.eContainer
+		val entityOfField = field.entity
 		val referencedEntity = field.backref.entityReference
 		if(entityOfField != referencedEntity){
-			error('''The type of the referenced field («referencedEntity.name») does not equal the type of this entity («(entityOfField as Entity).name»)''', field, PersistencePackage.Literals.BACKREF_FIELD__BACKREF)
+			error('''The type of the referenced field («referencedEntity.name») does not equal the type of this entity («entityOfField.name»)''', field, PersistencePackage.Literals.BACKREF_FIELD__BACKREF)
 		}
 	}
 }

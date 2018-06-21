@@ -11,8 +11,12 @@ PersistenceModel:
 ;
 Entity:
 	'entity' name=ID '{'
-		fields+=Field+
+		fieldDeclarations+=FieldDeclaration+
 	'}'
+;
+
+FieldDeclaration:
+	field=Field ('[' options+=TypeOption (',' options+=TypeOption)? ']')?
 ;
 
 Field:
@@ -20,15 +24,15 @@ Field:
 ;
 
 PropertyField:
-	'property' name=ID ':' type=Type ('[' options+=TypeOption (',' options+=TypeOption)? ']')?
+	'property' name=ID ':' type=Type
 ;
 
 EntityField:
-	'object' '[' cardinality=Cardinality ']' name=ID ':' entityReference=[Entity] ('[' options+=TypeOption (',' options+=TypeOption)? ']')?
+	'object' '[' cardinality=Cardinality ']' name=ID ':' entityReference=[Entity]
 ;
 
 BackrefField:
-	'backref' '[' backref=[EntityField|FQN] ']' name=ID ('[' options+=TypeOption (',' options+=TypeOption)? ']')?
+	'backref' '[' backref=[EntityField|FQN] ']' name=ID
 ;
 
 FQN:

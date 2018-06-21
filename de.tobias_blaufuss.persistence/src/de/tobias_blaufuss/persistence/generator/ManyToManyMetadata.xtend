@@ -1,18 +1,19 @@
 package de.tobias_blaufuss.persistence.generator
 
-
-import de.tobias_blaufuss.persistence.persistence.EntityField
 import de.tobias_blaufuss.persistence.persistence.Cardinality
 import de.tobias_blaufuss.persistence.persistence.Entity
+import de.tobias_blaufuss.persistence.persistence.EntityField
 
 class ManyToManyMetadata {
+	private static FieldUtils fu = new FieldUtils
+	
 	Entity destination
 	Entity source
 	new(EntityField field){
 		if(field.cardinality != Cardinality.MANY_TO_MANY){
 			throw new IllegalArgumentException('Cardinality is not n..m:' + field.cardinality)
 		}
-		source = field.eContainer as Entity
+		source = fu.getEntity(field)
 		destination = field.entityReference
 	}
 	

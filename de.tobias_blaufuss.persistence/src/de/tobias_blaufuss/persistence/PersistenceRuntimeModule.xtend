@@ -7,6 +7,9 @@ import org.eclipse.xtext.service.SingletonBinding
 import de.tobias_blaufuss.persistence.generator.EntityFieldUtils
 import de.tobias_blaufuss.persistence.generator.PersistenceModelUtils
 import de.tobias_blaufuss.persistence.generator.EntityUtils
+import de.tobias_blaufuss.persistence.generator.FieldUtils
+import de.tobias_blaufuss.persistence.generator.ManyToManyMetadata
+import com.google.inject.BindingAnnotation
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -26,4 +29,10 @@ class PersistenceRuntimeModule extends AbstractPersistenceRuntimeModule {
 	def Class<EntityUtils> bindEntityUtils(){
 		return EntityUtils
 	}
+	
+	@SingletonBinding
+	def Class<FieldUtils> bindFieldUtils(){
+		return FieldUtils
+	}
+
 }

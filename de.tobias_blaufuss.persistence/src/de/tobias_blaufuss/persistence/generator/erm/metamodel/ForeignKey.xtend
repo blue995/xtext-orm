@@ -1,13 +1,16 @@
 package de.tobias_blaufuss.persistence.generator.erm.metamodel
 
 import de.tobias_blaufuss.persistence.persistence.EntityField
-import de.tobias_blaufuss.persistence.persistence.Entity
 import de.tobias_blaufuss.persistence.persistence.Field
 import de.tobias_blaufuss.persistence.persistence.BackrefField
 import de.tobias_blaufuss.persistence.generator.erm.ISQLAlchemyGenerator
 import de.tobias_blaufuss.persistence.generator.PythonConstants
+import com.google.inject.Inject
+import de.tobias_blaufuss.persistence.generator.FieldUtils
 
 class ForeignKey implements ISQLAlchemyGenerator{
+	private static FieldUtils fu = new FieldUtils
+	
 	String fkTargetColumn
 	String fkConstraintName
 	String sourceFkColumn
@@ -19,7 +22,7 @@ class ForeignKey implements ISQLAlchemyGenerator{
 	}
 	
 	new(BackrefField field){
-		this.fkTargetColumn = getFkTargetColumn((field.backref.eContainer as Entity).name)
+		this.fkTargetColumn = getFkTargetColumn((fu.getEntity(field.backref)).name)
 		this.fkConstraintName = getFkConstraintName(field)
 		this.sourceFkColumn = getSourceFkColumn(field.name)
 	}
@@ -29,7 +32,7 @@ class ForeignKey implements ISQLAlchemyGenerator{
 	}
 	
 	private def getFkConstraintName(Field field){
-		return '''«PythonConstants.FK_SIGN»_«(field.eContainer as Entity).name.toLowerCase»_«field.name.toLowerCase»'''
+		return '''«PythonConstants.FK_SIGN»_«(fu.getEntity(field)).name.toLowerCase»_«field.name.toLowerCase»'''
 	}
 	
 	private def getSourceFkColumn(String name){
