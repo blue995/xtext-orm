@@ -1,20 +1,20 @@
 entity Club {
 	property name: String [unique, not_null]
 	
-	object [n..1] sportshall: SportsHall [not_null]
+	object [n..1|->] sportshall: SportsHall [not_null]
 	
-	object [1..n] teams: Team
-	object [1..n] roles: ClubRole
-	object [1..n] sessions: TrainingSession
+	object [1..n|<->] teams: Team
+	object [1..n|<->] roles: ClubRole
+	object [1..n|<->] sessions: TrainingSession
 }
 
 entity Team {
 	property numbering: Integer [not_null]
 	property name: String [unique]
 	
-	object [n..1] leader: Player // UseAlter when a cyclic dependency occurs
+	object [n..1|->] leader: Player // UseAlter when a cyclic dependency occurs
 	
-	object [n..m] sessions: TrainingSession
+	object [n..m|->] sessions: TrainingSession
 	
 	backref [Club.teams] club [not_null]
 	backref [Player.team] members
@@ -26,11 +26,11 @@ entity Player {
 	property last_name: String [not_null]
 	property position: Integer
 	
-	object [1..n] information: Information
-	object [1..n] roles: ClubRole
+	object [1..n|<->] information: Information
+	object [1..n|<->] roles: ClubRole
 	
-	object [n..1] team: Team
-	object [n..1] image: Image [not_null]
+	object [n..1|<->] team: Team
+	object [n..1|->] image: Image [not_null]
 }
 
 entity Image {
@@ -53,7 +53,7 @@ entity SportsHall {
 	property country: String [not_null]
 	property state: String [not_null]
 	
-	object [n..m] images: Image
+	object [n..m|->] images: Image
 }
 
 entity ClubRole {

@@ -28,7 +28,7 @@ PropertyField:
 ;
 
 EntityField:
-	'object' '[' cardinality=Cardinality ']' name=ID ':' entityReference=[Entity]
+	'object' '[' cardinality=Cardinality '|' (bidirectional ?= '<->'| unidirectional ?= '->') ']' name=ID ':' entityReference=[Entity]
 ;
 
 BackrefField:
