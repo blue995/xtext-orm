@@ -1,4 +1,4 @@
-package de.tobias_blaufuss.persistence.generator
+package de.tobias_blaufuss.persistence.generator.util
 
 import de.tobias_blaufuss.persistence.persistence.Entity
 import de.tobias_blaufuss.persistence.persistence.Cardinality

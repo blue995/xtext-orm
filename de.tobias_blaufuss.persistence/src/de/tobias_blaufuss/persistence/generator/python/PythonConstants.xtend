@@ -1,4 +1,4 @@
-package de.tobias_blaufuss.persistence.generator
+package de.tobias_blaufuss.persistence.generator.python
 
 class PythonConstants {
 	public static val TRUE = "True"

@@ -1,4 +1,4 @@
-package de.tobias_blaufuss.persistence.generator.erm.metamodel
+package de.tobias_blaufuss.persistence.generator.python.sqlalchemy
 
 import de.tobias_blaufuss.persistence.persistence.Type
 import de.tobias_blaufuss.persistence.persistence.PropertyField
@@ -8,8 +8,8 @@ import de.tobias_blaufuss.persistence.persistence.TypeOption
 import java.util.List
 import de.tobias_blaufuss.persistence.persistence.UniqueOption
 import de.tobias_blaufuss.persistence.persistence.NotNullOption
-import de.tobias_blaufuss.persistence.generator.PythonConstants
-import de.tobias_blaufuss.persistence.generator.erm.ISQLAlchemyGenerator
+import de.tobias_blaufuss.persistence.generator.python.PythonConstants
+import de.tobias_blaufuss.persistence.generator.python.sqlalchemy.ISQLAlchemyGenerator
 import de.tobias_blaufuss.persistence.persistence.BackrefField
 import de.tobias_blaufuss.persistence.persistence.EntityField
 import de.tobias_blaufuss.persistence.persistence.Field

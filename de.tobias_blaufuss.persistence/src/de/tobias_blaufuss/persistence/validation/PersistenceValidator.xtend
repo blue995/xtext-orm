@@ -4,8 +4,8 @@
 package de.tobias_blaufuss.persistence.validation
 
 import com.google.inject.Inject
-import de.tobias_blaufuss.persistence.generator.EntityUtils
-import de.tobias_blaufuss.persistence.generator.FieldUtils
+import de.tobias_blaufuss.persistence.generator.util.EntityUtils
+import de.tobias_blaufuss.persistence.generator.util.FieldUtils
 import de.tobias_blaufuss.persistence.persistence.BackrefField
 import de.tobias_blaufuss.persistence.persistence.EntityField
 import de.tobias_blaufuss.persistence.persistence.PersistencePackage

@@ -1,8 +1,8 @@
-package de.tobias_blaufuss.persistence.generator.erm.metamodel
+package de.tobias_blaufuss.persistence.generator.python.sqlalchemy
 
-import de.tobias_blaufuss.persistence.generator.FieldUtils
-import de.tobias_blaufuss.persistence.generator.PythonConstants
-import de.tobias_blaufuss.persistence.generator.erm.ISQLAlchemyGenerator
+import de.tobias_blaufuss.persistence.generator.util.FieldUtils
+import de.tobias_blaufuss.persistence.generator.python.PythonConstants
+import de.tobias_blaufuss.persistence.generator.python.sqlalchemy.ISQLAlchemyGenerator
 import de.tobias_blaufuss.persistence.persistence.BackrefField
 import de.tobias_blaufuss.persistence.persistence.EntityField
 import de.tobias_blaufuss.persistence.persistence.Field

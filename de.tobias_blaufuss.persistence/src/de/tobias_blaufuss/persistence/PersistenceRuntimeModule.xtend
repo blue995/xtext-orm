@@ -3,11 +3,12 @@
  */
 package de.tobias_blaufuss.persistence
 
-import de.tobias_blaufuss.persistence.generator.EntityFieldUtils
-import de.tobias_blaufuss.persistence.generator.EntityUtils
-import de.tobias_blaufuss.persistence.generator.FieldUtils
-import de.tobias_blaufuss.persistence.generator.PersistenceModelUtils
 import org.eclipse.xtext.service.SingletonBinding
+import de.tobias_blaufuss.persistence.generator.python.sqlalchemy.SQLAlchemyGenerator
+import de.tobias_blaufuss.persistence.generator.util.EntityFieldUtils
+import de.tobias_blaufuss.persistence.generator.util.PersistenceModelUtils
+import de.tobias_blaufuss.persistence.generator.util.EntityUtils
+import de.tobias_blaufuss.persistence.generator.util.FieldUtils
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -31,6 +32,11 @@ class PersistenceRuntimeModule extends AbstractPersistenceRuntimeModule {
 	@SingletonBinding
 	def Class<FieldUtils> bindFieldUtils(){
 		return FieldUtils
+	}
+	
+	@SingletonBinding
+	def Class<SQLAlchemyGenerator> bindSQLAlchemyGenerator(){
+		return SQLAlchemyGenerator
 	}
 
 }
