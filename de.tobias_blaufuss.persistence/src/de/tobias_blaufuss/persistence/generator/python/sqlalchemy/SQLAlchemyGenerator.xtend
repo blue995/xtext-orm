@@ -1,22 +1,54 @@
 package de.tobias_blaufuss.persistence.generator.python.sqlalchemy
 
-import de.tobias_blaufuss.persistence.persistence.PersistenceModel
 import com.google.inject.Inject
-import de.tobias_blaufuss.persistence.generator.util.EntityFieldUtils
-import de.tobias_blaufuss.persistence.generator.util.PersistenceModelUtils
-import de.tobias_blaufuss.persistence.generator.util.EntityUtils
 import de.tobias_blaufuss.persistence.generator.python.PythonConstants
-import de.tobias_blaufuss.persistence.persistence.Cardinality
-import de.tobias_blaufuss.persistence.persistence.PropertyField
+import de.tobias_blaufuss.persistence.generator.util.EntityFieldUtils
+import de.tobias_blaufuss.persistence.generator.util.EntityUtils
+import de.tobias_blaufuss.persistence.generator.util.PersistenceModelUtils
 import de.tobias_blaufuss.persistence.persistence.BackrefField
-import de.tobias_blaufuss.persistence.persistence.EntityField
-import java.util.LinkedList
+import de.tobias_blaufuss.persistence.persistence.Cardinality
 import de.tobias_blaufuss.persistence.persistence.Entity
+import de.tobias_blaufuss.persistence.persistence.EntityField
+import de.tobias_blaufuss.persistence.persistence.PersistenceModel
+import de.tobias_blaufuss.persistence.persistence.PropertyField
+import de.tobias_blaufuss.persistence.persistence.PythonConfiguration
+import java.util.LinkedList
+import java.util.regex.Pattern
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.generator.IFileSystemAccess2
+import org.eclipse.xtext.generator.IGeneratorContext
 
 class SQLAlchemyGenerator {
 	@Inject extension EntityFieldUtils
 	@Inject extension PersistenceModelUtils
 	@Inject extension EntityUtils
+	
+	def compileSQLAlchemyModel(PersistenceModel model, PythonConfiguration config, Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context){
+		val path = compilePythonModules(config, fsa)
+		fsa.generateFile('''«path»/«extractModuleName(config)».py''', model.compileSQLAlchemyModel)
+	}
+	
+	def extractModuleName(PythonConfiguration config){
+		return config.fileName.split(Pattern.quote(".")).last
+	}
+	
+	def compilePythonModules(PythonConfiguration config, IFileSystemAccess2 fsa){
+		val modules = new LinkedList
+		modules.addAll(config.fileName.split(Pattern.quote(".")))
+		val lastModule = modules.last
+		modules.remove(lastModule)
+		var basePath = config.path
+		for(module : modules){
+			basePath = String.join('/', basePath, module)
+			generatePythonModule(basePath, module, fsa)
+		}
+		return basePath
+	}
+	
+	def generatePythonModule(String path, String module, IFileSystemAccess2 fsa){
+		fsa.generateFile('''«path»/__init__.py''', '')
+	}
+	
 	
 	def compileSQLAlchemyModel(PersistenceModel model)'''
 		from app_vars import CONTAINER

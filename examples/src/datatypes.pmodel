@@ -1,3 +1,19 @@
+Configuration [
+	Python [
+		genpath python
+		module_name database.model
+		ORM SQLAlchemy
+	]
+	Java [
+		genpath java/src
+		package de.hs_coburg.mgse.platform.model
+		ORM Hibernate
+	]
+]
+
+
+Model
+
 entity Club {
 	property name: String [unique, not_null]
 	
@@ -34,7 +50,7 @@ entity Player {
 }
 
 entity Image {
-	property path: String(200) [not_null]
+	property paths: String(200) [not_null]
 	property title: String [not_null]
 }
 
