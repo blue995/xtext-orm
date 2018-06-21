@@ -1,10 +1,8 @@
 package de.tobias_blaufuss.persistence.generator
 
 import com.google.inject.Inject
-import de.tobias_blaufuss.persistence.persistence.EntityField
-import de.tobias_blaufuss.persistence.persistence.FieldDeclaration
-import de.tobias_blaufuss.persistence.persistence.Entity
 import de.tobias_blaufuss.persistence.persistence.BackrefField
+import de.tobias_blaufuss.persistence.persistence.EntityField
 
 class EntityFieldUtils {
 	@Inject extension EntityUtils

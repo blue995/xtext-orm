@@ -1,12 +1,11 @@
 package de.tobias_blaufuss.persistence.generator.erm.metamodel
 
+import de.tobias_blaufuss.persistence.generator.FieldUtils
+import de.tobias_blaufuss.persistence.generator.PythonConstants
+import de.tobias_blaufuss.persistence.generator.erm.ISQLAlchemyGenerator
+import de.tobias_blaufuss.persistence.persistence.BackrefField
 import de.tobias_blaufuss.persistence.persistence.EntityField
 import de.tobias_blaufuss.persistence.persistence.Field
-import de.tobias_blaufuss.persistence.persistence.BackrefField
-import de.tobias_blaufuss.persistence.generator.erm.ISQLAlchemyGenerator
-import de.tobias_blaufuss.persistence.generator.PythonConstants
-import com.google.inject.Inject
-import de.tobias_blaufuss.persistence.generator.FieldUtils
 
 class ForeignKey implements ISQLAlchemyGenerator{
 	private static FieldUtils fu = new FieldUtils

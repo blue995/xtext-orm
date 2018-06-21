@@ -18,9 +18,7 @@ class FieldUtils {
 	
 	def Entity getEntity(Field field){
 		val declaration = field.declaration
-		println(declaration)
 		val entity = declaration.eContainer as Entity
-		println(entity)
 		return entity
 	}
 }
