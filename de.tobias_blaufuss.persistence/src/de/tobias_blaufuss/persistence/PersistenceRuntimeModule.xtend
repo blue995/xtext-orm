@@ -10,6 +10,7 @@ import de.tobias_blaufuss.persistence.generator.util.PersistenceModelUtils
 import de.tobias_blaufuss.persistence.generator.util.EntityUtils
 import de.tobias_blaufuss.persistence.generator.util.FieldUtils
 import de.tobias_blaufuss.persistence.generator.java.hibernate.JavaHibernateGenerator
+import de.tobias_blaufuss.persistence.generator.java.hibernate.JavaHibernateUtils
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -43,6 +44,11 @@ class PersistenceRuntimeModule extends AbstractPersistenceRuntimeModule {
 	@SingletonBinding
 	def Class<JavaHibernateGenerator> bindJavaHibernateGenerator(){
 		return JavaHibernateGenerator
+	}
+	
+	@SingletonBinding
+	def Class<JavaHibernateUtils> bindJavaHibernateUtils(){
+		return JavaHibernateUtils
 	}
 
 }

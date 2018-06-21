@@ -9,11 +9,15 @@ import de.tobias_blaufuss.persistence.persistence.PropertyField
 
 class EntityUtils {
 	def getEntityFieldsWithCardinality(Entity entity, Cardinality cardinality){
-		return getFields(EntityField, entity).filter[f | f.cardinality == cardinality]
+		return entity.entityFields.filter[f | f.cardinality == cardinality]
 	}
 	
 	def hasEntityFieldsOfCardinality(Entity entity, Cardinality cardinality){
-		return getFields(EntityField, entity).filter(EntityField).exists[f | f.cardinality == cardinality]
+		return entity.entityFields.exists[f | f.cardinality == cardinality]
+	}
+	
+	def getEntityFields(Entity entity){
+		return getFields(EntityField, entity).filter(EntityField)
 	}
 	
 	def getBackrefFields(Entity entity){

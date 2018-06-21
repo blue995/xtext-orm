@@ -6,7 +6,7 @@ Configuration [
 	]
 	Java [
 		genpath java/src
-		package de.hs_coburg.mgse.platform.model
+		package model
 		ORM Hibernate
 	]
 ]
