@@ -14,9 +14,13 @@ class JavaHibernateUtils {
 	extension EntityFieldUtils = new EntityFieldUtils
 	
 	def getJavaType(Type type) {
+		type.javaTypeClass.name
+	}
+	
+	def Class<?> getJavaTypeClass(Type type){
 		switch type {
-			StringType: return String.name
-			IntegerType: return Integer.name
+			StringType: return String
+			IntegerType: return Integer
 		}
 	}
 
