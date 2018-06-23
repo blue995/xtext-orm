@@ -7,6 +7,8 @@ and ORMs are supported.
 
 ## Currently supported languages
 * Python, 3.6.5
+* Java 8 (<=) 
 
 ## Currently supported ORM
 * SQLAlchemy, 1.2.8
+* Hiberante, 5.3.1
