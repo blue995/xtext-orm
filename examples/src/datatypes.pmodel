@@ -11,9 +11,6 @@ Configuration [
 	]
 ]
 
-
-Model
-
 entity Club {
 	property name: String [unique, not_null]
 	
@@ -32,7 +29,7 @@ entity Team {
 	
 	object [n..m|->] sessions: TrainingSession
 	
-	backref [Club.teams] club [not_null]
+	backref [Club.teams] club
 	backref [Player.team] members
 }
 

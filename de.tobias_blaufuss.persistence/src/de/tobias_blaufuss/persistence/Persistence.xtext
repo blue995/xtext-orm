@@ -10,7 +10,6 @@ PersistenceModel:
 	'Configuration' '['
 		configs+=Configuration+
 	']'
-	'Model'
 	(entities+=Entity)+
 ;
 Entity:

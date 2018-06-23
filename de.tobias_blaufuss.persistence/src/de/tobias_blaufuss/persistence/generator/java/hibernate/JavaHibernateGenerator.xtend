@@ -3,7 +3,6 @@ package de.tobias_blaufuss.persistence.generator.java.hibernate
 import com.google.inject.Inject
 import de.tobias_blaufuss.persistence.generator.util.EntityFieldUtils
 import de.tobias_blaufuss.persistence.generator.util.EntityUtils
-import de.tobias_blaufuss.persistence.generator.util.FieldUtils
 import de.tobias_blaufuss.persistence.persistence.BackrefField
 import de.tobias_blaufuss.persistence.persistence.Cardinality
 import de.tobias_blaufuss.persistence.persistence.Entity
@@ -18,7 +17,6 @@ import org.eclipse.xtext.generator.IGeneratorContext
 class JavaHibernateGenerator {
 	@Inject extension EntityUtils
 	@Inject extension EntityFieldUtils
-	@Inject extension FieldUtils
 	@Inject extension JavaHibernateUtils
 	
 	def compileHibernateModel(PersistenceModel model, JavaConfiuration config, Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context){
@@ -124,40 +122,22 @@ class JavaHibernateGenerator {
 	'''
 	
 	def compileManyToOneEntityField(EntityField entityField)'''
-		«new ManyToOneRelationShip(entityField).compile»
+		«new ManyToOneRelationship(entityField).compile»
 	'''
 	
 	def compileManyToManyEntityField(EntityField entityField)'''
-		@JoinTable(name = "«entityField.entity.name.columnName»_«entityField.entityName.columnName»", joinColumns = {
-			@JoinColumn(name = "«entityField.entity.idName»", referencedColumnName = "«entityField.entity.idName»")}, inverseJoinColumns = {
-			@JoinColumn(name = "«entityField.entityReference.idName»", referencedColumnName = "«entityField.entityReference.idName»")})
-		@ManyToMany
-		private Collection<«entityField.entityName»> «entityField.name»;
+		«new ManyToManyRelationship(entityField).compile»
 	'''
 	
 	def compileBackrefField(BackrefField backrefField)'''
-		«IF backrefField.backref.cardinality == Cardinality.MANY_TO_ONE»
+		«IF backrefField.cardinality == Cardinality.ONE_TO_MANY»
 		«new OneToManyRelationship(backrefField).compile»
 		«ENDIF»
-		«IF backrefField.backref.cardinality == Cardinality.ONE_TO_MANY»
-		«new ManyToOneRelationShip(backrefField).compile»
+		«IF backrefField.cardinality == Cardinality.MANY_TO_ONE»
+		«new ManyToOneRelationship(backrefField).compile»
+		«ENDIF»
+		«IF backrefField.cardinality == Cardinality.MANY_TO_MANY»
+		«new ManyToOneRelationship(backrefField).compile»
 		«ENDIF»
 	'''
-	
-	def compileType(EntityField entityField){
-		if(entityField.cardinality.collection){
-			return '''Collection<«entityField.entityName»>'''
-		} else {
-			return entityField.entityName
-		}
-	}
-	
-	def compileType(BackrefField backrefField){
-		if(backrefField.cardinality.collection){
-			return '''Collection<«backrefField.typeName»>'''
-		} else {
-			return backrefField.typeName
-		}
-	}
-
 }
